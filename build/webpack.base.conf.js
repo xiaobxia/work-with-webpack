@@ -10,6 +10,7 @@ function resolve (dir) {
 }
 
 module.exports = {
+  //TODO 入口文件，通过key和chunk关联上
   entry: {
     //key的值需要和chunk的名字对应
     'index': './src/js/index.js',

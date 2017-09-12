@@ -86,6 +86,7 @@ var webpackConfig = merge(baseWebpackConfig, {
       // necessary to consistently work with multiple chunks via CommonsChunkPlugin
       chunksSortMode: 'dependency'
     }),
+    //TODO 不抽取公共模块
     // split vendor js into its own file
     // new webpack.optimize.CommonsChunkPlugin({
     //   name: 'vendor',
@@ -110,7 +111,9 @@ var webpackConfig = merge(baseWebpackConfig, {
     // copy custom static assets
     new CopyWebpackPlugin([
       {
+        //源
         from: path.resolve(__dirname, '../src/static'),
+        //dist
         to: config.build.assetsSubDirectory,
         ignore: ['.*']
       }
