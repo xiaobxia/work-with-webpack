@@ -8,14 +8,18 @@ var happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length});
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
+//添加入口js
+var entries = utils.getEntry(['./src/js/*.js']);
+console.log(entries)
 
 module.exports = {
   //TODO 入口文件，通过key和chunk关联上
-  entry: {
-    //key的值需要和chunk的名字对应
-    'index': './src/js/index.js',
-    'page1': './src/js/page1.js'
-  },
+  // entry: {
+  //   //key的值需要和chunk的名字对应
+  //   'index': './src/js/index.js',
+  //   'page1': './src/js/page1.js'
+  // },
+  entry: entries,
   output: {
     path: config.build.assetsRoot,
     filename: '[name].js',

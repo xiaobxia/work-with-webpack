@@ -1,5 +1,6 @@
 var path = require('path')
 var config = require('../config')
+var glob = require('glob')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 
 exports.assetsPath = function (_path) {
@@ -61,14 +62,36 @@ exports.cssLoaders = function (options) {
 
 // Generate loaders for standalone style files (outside of .vue)
 exports.styleLoaders = function (options) {
-  var output = []
+  var output = [];
   var loaders = exports.cssLoaders(options)
   for (var extension in loaders) {
     var loader = loaders[extension]
+    //TODO rules部分
     output.push({
       test: new RegExp('\\.' + extension + '$'),
       use: loader
     })
   }
   return output
+}
+
+exports.getEntry = function (globPath) {
+  var entries = {},
+    basename, tmp, pathname;
+  if (typeof (globPath) != "object") {
+    globPath = [globPath]
+  }
+  globPath.forEach((itemPath) => {
+    glob.sync(itemPath).forEach(function (entry) {
+      basename = path.basename(entry, path.extname(entry));
+      if (entry.split('/').length > 4) {
+        tmp = entry.split('/').splice(-3);
+        pathname = tmp.splice(0, 1) + '/' + basename; // 正确输出js和html的路径
+        entries[pathname] = entry;
+      } else {
+        entries[basename] = entry;
+      }
+    });
+  });
+  return entries;
 }

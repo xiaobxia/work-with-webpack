@@ -53,39 +53,39 @@ var webpackConfig = merge(baseWebpackConfig, {
     // generate dist index.html with correct asset hash for caching.
     // you can customize output by editing /index.html
     // see https://github.com/ampedandwired/html-webpack-plugin
-    new HtmlWebpackPlugin({
-      filename: 'view/index.html',
-      template: './src/view/index.html',
-      inject: true,
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true,
-        removeAttributeQuotes: true
-        // more options:
-        // https://github.com/kangax/html-minifier#options-quick-reference
-      },
-      chunks : ['index'],
-      hash : true,
-      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-      chunksSortMode: 'dependency'
-    }),
-    new HtmlWebpackPlugin({
-      filename: 'view/page1.html',
-      template: './src/view/page1.html',
-      inject: true,
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true,
-        removeAttributeQuotes: true
-        // more options:
-        // https://github.com/kangax/html-minifier#options-quick-reference
-      },
-      //TODO 很重要就是因为这个对应的js到对应页面，没有的话一个页面会有很多js（要和entry中的key对应）
-      chunks : ['page1'],
-      hash : true,
-      // necessary to consistently work with multiple chunks via CommonsChunkPlugin
-      chunksSortMode: 'dependency'
-    }),
+    // new HtmlWebpackPlugin({
+    //   filename: 'view/index.html',
+    //   template: './src/view/index.html',
+    //   inject: true,
+    //   minify: {
+    //     removeComments: true,
+    //     collapseWhitespace: true,
+    //     removeAttributeQuotes: true
+    //     // more options:
+    //     // https://github.com/kangax/html-minifier#options-quick-reference
+    //   },
+    //   chunks : ['index'],
+    //   hash : true,
+    //   // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+    //   chunksSortMode: 'dependency'
+    // }),
+    // new HtmlWebpackPlugin({
+    //   filename: 'view/page1.html',
+    //   template: './src/view/page1.html',
+    //   inject: true,
+    //   minify: {
+    //     removeComments: true,
+    //     collapseWhitespace: true,
+    //     removeAttributeQuotes: true
+    //     // more options:
+    //     // https://github.com/kangax/html-minifier#options-quick-reference
+    //   },
+    //   //TODO 很重要就是因为这个对应的js到对应页面，没有的话一个页面会有很多js（要和entry中的key对应）
+    //   chunks : ['page1'],
+    //   hash : true,
+    //   // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+    //   chunksSortMode: 'dependency'
+    // }),
     //TODO 不抽取公共模块
     // split vendor js into its own file
     // new webpack.optimize.CommonsChunkPlugin({
@@ -144,4 +144,33 @@ if (config.build.bundleAnalyzerReport) {
   webpackConfig.plugins.push(new BundleAnalyzerPlugin())
 }
 
+//添加html入口文件
+var pages = utils.getEntry(['./src/view/*.html']);
+console.log(pages)
+//配置HtmlWebpackPlugin
+for (var pathname in pages) {
+  // 配置生成的html文件，定义路径等
+  var conf = {
+    //TODO filename代表了路径，所以需要和assets的路径对应上
+    filename: pathname + '.html',
+    template: pages[pathname],   // 模板路径
+    inject: true,              // js插入位置
+    // necessary to consistently work with multiple chunks via CommonsChunkPlugin
+    chunksSortMode: 'dependency',
+    minify: {
+      removeComments: true,
+      collapseWhitespace: true,
+      removeAttributeQuotes: true
+      // more options:
+      // https://github.com/kangax/html-minifier#options-quick-reference
+    }
+  };
+
+  if (pathname in webpackConfig.entry) {
+    conf.chunks = ['manifest', 'vendor', pathname];
+    conf.hash = true;
+  }
+
+  webpackConfig.plugins.push(new HtmlWebpackPlugin(conf));
+}
 module.exports = webpackConfig

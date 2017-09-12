@@ -10,7 +10,7 @@ module.exports = {
     //解决打包时font的问题
     assetsPathInCss: '../../',
     //该场景下使用../
-    assetsPublicPath: '../',
+    assetsPublicPath: './',
     //打包就移除sourceMap
     productionSourceMap: false,
     // Gzip off by default as many popular static hosts such as
